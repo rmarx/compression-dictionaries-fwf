@@ -19,7 +19,7 @@
         "@fermyon/knitwit": "0.3.0"
     },
     "dependencies": {
-        "@fermyon/spin-sdk": "^3.0.0",
+        "@fermyon/spin-sdk": "git+https://github.com/karthik2804/spin-js-sdk.git#membuffer_fix",
         "itty-router": "^5.0.18"
     }
 }
