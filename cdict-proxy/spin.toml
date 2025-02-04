@@ -1,0 +1,19 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["root"]
+description = "Proxy for generating compression dictionaries"
+name = "cdict-proxy"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "cdict-proxy"
+
+[component.cdict-proxy]
+source = "dist/cdict-proxy.wasm"
+exclude_files = ["**/node_modules"]
+
+[component.cdict-proxy.build]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]
