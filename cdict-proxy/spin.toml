@@ -14,15 +14,30 @@ component = "cdict-proxy"
 source = "dist/cdict-proxy.wasm"
 allowed_outbound_hosts = ["*://*:*"]
 exclude_files = ["**/node_modules"]
+files = [{ source = "assets/dictionaries", destination = "/" }]
+dependencies_inherit_configuration = true
 
 [component.cdict-proxy.build]
 command = ["npm install", "npm run build"]
 watch = ["src/**/*.ts"]
 
-[[trigger.http]]
-route = "/static/..."
-component = "static-fileserver"
+[component.cdict-proxy.dependencies]
+# Library written in Rust that performs zstd dictionary compression.
+"component:compressor/compress" = { path = "compressor/target/wasm32-wasip1/release/cmprsn_lib.wasm" }
 
-[component.static-fileserver]
+[component.compressor]
+source = "compressor/target/wasm32-wasip1/release/cmprsn_lib.wasm"
+
+[component.compressor.build]
+command = ["make compressor"]
+
+# Static fileserver for our assets directory.
+# This could be replaced by the TypeScript component itself reading files.
+[[trigger.http]]
+# http://example.org/static/files/my/file.txt maps to /assets/files/my/file.txt
+route = "/static/..."
+component = "assets"
+[component.assets]
 source = { url = "https://github.com/fermyon/spin-fileserver/releases/download/v0.3.0/spin_static_fs.wasm", digest = "sha256:ef88708817e107bf49985c7cefe4dd1f199bf26f6727819183d5c996baa3d148" }
 files = [{ source = "assets", destination = "/" }]
+

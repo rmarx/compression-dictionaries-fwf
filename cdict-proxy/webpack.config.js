@@ -26,6 +26,9 @@ module.exports = {
             type: "module",
         }
     },
+    externals: {
+        "component:compressor/compress": "component:compressor/compress"
+    },
     plugins: [
         new SpinSdkPlugin()
     ],

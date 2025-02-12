@@ -2,7 +2,11 @@
   "version": 1,
   "project": {
     "worlds": [
-      "spin-http"
+      "spin-http",
+      "deps"
+    ],
+    "witPaths": [
+      ".wit/components/cdict-proxy"
     ]
   },
   "packages": {

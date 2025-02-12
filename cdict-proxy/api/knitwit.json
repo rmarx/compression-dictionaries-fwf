@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "packages": {
+    "@fermyon/wasi-ext": {
+      "witPath": "../../wit"
+    }
+  }
+}

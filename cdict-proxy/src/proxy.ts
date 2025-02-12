@@ -1,4 +1,5 @@
 import { IRequestStrict } from "itty-router";
+import ZstdCompressor from "./compression/ZstdCompressor";
 
 export async function proxy( req:IRequestStrict ) {
 
@@ -7,38 +8,39 @@ export async function proxy( req:IRequestStrict ) {
     console.log("Proxying for compression dictionaries. " + req.params.filepath);
 
     // reqpath should be relative to assets. So files/myfile.txt and NOT assets/files/myfile.txt
-    const res = await fetch(`/static/${req.params.filepath}`);
-    return new Response(res.body, { status: res.status });
+    const originalResponse = await fetch(`/static/${req.params.filepath}`);
 
-    // let { file } = req.params;
-    // const res = await fetch(`/static/assets/train/${file}`);
+    const availableDictionary = req.headers.get("Available-Dictionary");
+    const acceptEncoding = req.headers.get("Accept-Encoding");
 
-    // // If the request headers contained a dictionary ID, compress the outgoing stream.
-    // // Otherwise, stream the response unaltered.
-    // // This currently only supports Dictionary Compressed Zstandard streams.
-    // let acceptEncoding = req.headers.get("Accept-Encoding") || "";
-    // let id = req.headers.get("Dictionary-Id");
-    // if (req.headers.get("Available-Dictionary") && id && acceptEncoding.includes("dcz")) {
-    //     console.log(`[compression]: Requested compression for file ${file} with dictionary ${id}`);
+    if ( !availableDictionary || !acceptEncoding || !acceptEncoding.split(",").includes("dcz") ) {
+        console.log(`[proxy]: Streaming file ${req.params.filepath} unaltered`);
+        return new Response(originalResponse.body, { status: originalResponse.status });
+    }
+    else if ( availableDictionary !== "" ) {
+        return ZstdCompress( originalResponse, availableDictionary );
+    }
 
-    //     // Instantiate the compressor and create a new transform stream.
-    //     // Setting the default compression level here as 0.
-    //     let compressor = new Compressor(0, id);
-    //     let compressionStream = new TransformStream({
-    //         transform(chunk, controller) {
-    //             // for each chunk, compress thy bytes, then stream them
-    //             let buf = compressor.addBytes(chunk);
-    //             controller.enqueue(buf);
-    //         }, flush(controller) {
-    //             let final = compressor.finish();
-    //             controller.enqueue(final);
-    //         }
-    //     });
+    console.log(`[proxy]: Streaming file ${req.params.filepath} unaltered PASSTHROUGH`);
+    return new Response(originalResponse.body, { status: originalResponse.status });
+}
 
-    //     return new Response(res.body?.pipeThrough(compressionStream), { status: res.status });
-    //     // The request did not have the right headers, so passing the stream along unaltered.
-    // } else {
-    //     console.log(`[compression]: Streaming file ${file} unaltered`);
-    //     return new Response(res.body, { status: res.status });
-    // }
+async function ZstdCompress(responseStream:Response, dictionaryID:string) {
+
+    console.log(`[proxy]: Zstd Compressing ${responseStream.url} with ${dictionaryID}`);
+
+    let compressor = new ZstdCompressor(0, dictionaryID);
+
+    let compressionStream = new TransformStream({
+        transform(chunk, controller) {
+            // for each chunk, compress thy bytes, then stream them
+            let buf = compressor.addBytes(chunk);
+            controller.enqueue(buf);
+        }, flush(controller) {
+            let final = compressor.finish();
+            controller.enqueue(final);
+        }
+    });
+
+    return new Response(responseStream.body?.pipeThrough(compressionStream), { status: responseStream.status });
 }
