@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Prefetch dictionaries for later usage</title>
+
+    
+    <script src="../files/main.v1.js" type="text/javascript"></script>
+
+    <link rel="compression-dictionary" href="../dictionaries/common.dict">
+    <link rel="compression-dictionary" href="../dictionaries/big-specific.dict">
+
+    <style>
+        
+    </style>
+    
+  </head>
+  <body>
+
+    <div class="wrapper">
+      <div class="content" role="main">
+        <h1 class="title">Dictionary loading page</h1>
+
+        
+
+
+        <p id="p1">
+          This page loads two resources that can be used as compression dictionaries:
+          <ol>
+            <li>A main.v1.js file (which can be used for main.*.js files)</li>
+            <li>A common.dict file (which can be used for all HTML documents)</li>
+          </ol>
+        </p>
+
+        <div id="jquery-out">
+
+        </div>
+        
+      </div>
+    </div>
+
+    <script>
+        $("#jquery-out").html("jQuery loaded!");
+    </script>
+  </body>
+</html>

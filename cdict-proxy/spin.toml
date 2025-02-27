@@ -14,7 +14,7 @@ component = "cdict-proxy"
 source = "dist/cdict-proxy.wasm"
 allowed_outbound_hosts = ["*://*:*"]
 exclude_files = ["**/node_modules"]
-files = [{ source = "assets/dictionaries", destination = "/" }]
+files = [{ source = "assets", destination = "/" }]
 dependencies_inherit_configuration = true
 
 [component.cdict-proxy.build]

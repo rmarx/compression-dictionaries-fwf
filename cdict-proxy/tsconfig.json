@@ -3,11 +3,11 @@
         "outDir": "./dist/",
         "noImplicitAny": true,
         "module": "es6",
-        "target": "es2020",
+        "target": "es2021",
         "jsx": "react",
         "skipLibCheck": true,
         "lib": [
-            "ES2020",
+            "ES2021",
             "WebWorker"
         ],
         "allowJs": true,

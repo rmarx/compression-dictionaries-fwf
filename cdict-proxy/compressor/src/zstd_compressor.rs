@@ -19,18 +19,36 @@ struct CompressorInner {
 impl GuestCompressor for ZstdCompressor {
     /// Constructor that takes a compression level and an optional dictionary path.
     fn new(level: u8, dict: String) -> Self {
-        let dict_data = std::fs::read(&dict)
-            .unwrap_or_else(|e| panic!("Failed to read dictionary file '{}': {}", dict, e));
-        let encoder = Some(
-            Encoder::with_dictionary(Cursor::new(Vec::new()), level as i32, &dict_data)
-                .expect("failed to create zstd encoder with dictionary"),
-        );
 
-        Self {
-            inner: RefCell::new(CompressorInner {
-                encoder,
-                last_pos: 0,
-            }),
+        println!("[ZstdCompressor]: ctor {dict}");
+
+        if dict.is_empty() {
+            let encoder = Some(
+                Encoder::new(Cursor::new(Vec::new()), level as i32)
+                    .expect("failed to create zstd encoder"),
+            );
+
+            Self {
+                inner: RefCell::new(CompressorInner {
+                    encoder,
+                    last_pos: 0,
+                }),
+            }
+        }
+        else {
+            let dict_data = std::fs::read(&dict)
+                .unwrap_or_else(|e| panic!("Failed to read dictionary file '{}': {}", dict, e));
+            let encoder = Some(
+                Encoder::with_dictionary(Cursor::new(Vec::new()), level as i32, &dict_data)
+                    .expect("failed to create zstd encoder with dictionary"),
+            );
+
+            Self {
+                inner: RefCell::new(CompressorInner {
+                    encoder,
+                    last_pos: 0,
+                }),
+            }
         }
     }
 
