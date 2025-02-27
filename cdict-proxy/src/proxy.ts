@@ -8,7 +8,7 @@ export async function proxy( req:IRequestStrict ) {
     console.log("Proxying for compression dictionaries. " + req.params.filepath);
 
     // reqpath should be relative to assets. So files/myfile.txt and NOT assets/files/myfile.txt
-    const originalResponse = await fetch(`/static/${req.params.filepath}`);
+    const originalResponse = await fetch(`https://assets.spin.internal/${req.params.filepath}`);
 
 
     console.log("Proxying for compression dictionaries 2 fetch returned. " + originalResponse.status + " // " + JSON.stringify(originalResponse.headers));
