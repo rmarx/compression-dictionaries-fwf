@@ -2,7 +2,9 @@ import { IRequestStrict } from "itty-router";
 
 export async function getDictionary( name:String, req:IRequestStrict ) {
     // name should already be the full name relative to assets/dictionaries/
-    const dictResponse = await fetch(`/static/dictionaries/${name}`);
+    // const dictResponse = await fetch(`/static/dictionaries/${name}`);
+    const dictResponse = await fetch(`https://assets.spin.internal/dictionaries/${name}`);
+    
 
     console.log(`[dictionaries]: fetched ${name}`);
 
