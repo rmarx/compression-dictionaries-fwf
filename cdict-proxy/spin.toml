@@ -8,7 +8,8 @@ version = "0.1.0"
 # Static fileserver for our assets directory.
 # This could be replaced by the TypeScript component itself reading files.
 [[trigger.http]]
-route = "/static/assets/..."
+# http://example.org/static/files/my/file.txt maps to /assets/files/my/file.txt
+route = "/static/..."
 component = "assets"
 
 [component.assets]
@@ -22,11 +23,9 @@ route = "/..."
 component = "api"
 
 [component.api]
-# The compiled Wasm component to for our function.
 source = "api/dist/api.wasm"
-# This function can make outbound requests to any host.
 allowed_outbound_hosts = ["*://*:*"]
-files = [{ source = "assets/dictionaries", destination = "/" }]
+files = [{ source = "assets", destination = "/" }]
 # Enable dependencies to inherit the permissions of the API component.
 # This gives the compressor access to the dictionaries directory.
 dependencies_inherit_configuration = true
