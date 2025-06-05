@@ -1,4 +1,4 @@
-WASI_SDK_PATH := /opt/wasi-sdk
+WASI_SDK_PATH := /srv/fermyon/wasi-sdk-25.0-x86_64-linux
 CC := $(WASI_SDK_PATH)/bin/clang --sysroot=$(WASI_SDK_PATH)/share/wasi-sysroot
 
 

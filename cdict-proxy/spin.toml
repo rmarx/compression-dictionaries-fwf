@@ -1,7 +1,8 @@
 spin_manifest_version = 2
 
 [application]
-name = "cmprsn"
+description = "Proxy for generating compression dictionaries and dictionary-compressing resources."
+name = "cdict-proxy"
 version = "0.1.0"
 
 # Static fileserver for our assets directory.
@@ -9,6 +10,7 @@ version = "0.1.0"
 [[trigger.http]]
 route = "/static/assets/..."
 component = "assets"
+
 [component.assets]
 source = { url = "https://github.com/fermyon/spin-fileserver/releases/download/v0.3.0/spin_static_fs.wasm", digest = "sha256:ef88708817e107bf49985c7cefe4dd1f199bf26f6727819183d5c996baa3d148" }
 files = [{ source = "assets", destination = "/" }]
@@ -31,8 +33,8 @@ dependencies_inherit_configuration = true
 
 # Build configuration for our component.
 [component.api.build]
-command = "npm install && npm run build"
 workdir = "api"
+command = "npm install && npm run build"
 watch = ["src/**/*.ts"]
 
 # Library written in Rust that performs zstd dictionary compression.
