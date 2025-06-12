@@ -3,6 +3,7 @@ import { AutoRouter, IRequestStrict, withParams } from 'itty-router';
 import { getDictionary } from './dictionaries';
 import { proxy } from './proxy';
 import { parseProxyConfig } from './config/ProxyConfig';
+import { parseDebugConfig } from './config/DebugConfig';
 
 let router = AutoRouter();
 
@@ -11,8 +12,8 @@ let router = AutoRouter();
 const dictionaryPathPrefix = "dictionaries";
 
 router
-    .get(`/${dictionaryPathPrefix}/:name`, parseProxyConfig,  (req:IRequestStrict) => { return getDictionary(req.params.name, req) })
-    .get(`/:filepath+`,                    parseProxyConfig,  (req:IRequestStrict) => { return proxy(req) })
+    .get(`/${dictionaryPathPrefix}/:name`, parseProxyConfig, parseDebugConfig, (req:IRequestStrict) => { return getDictionary(req.params.name, req) })
+    .get(`/:filepath+`,                    parseProxyConfig, parseDebugConfig, (req:IRequestStrict) => { return proxy(req) })
 
 // router
 //     // Route handler for clients requesting dictionaries.

@@ -12,8 +12,7 @@ export async function getDictionary( name:String, req:IRequestStrict ) {
 
     if ( name === "common.dict" ) {
 
-        // note: Content-Encoding HAS TO BE UNSET or chrome won't accept (even though it's technically a zstd-generated dictionary)
-        headers.set("Cache-Control", `public, max-age=2592000`);
+        headers.set("Cache-Control", `public, max-age=300`);
         headers.set("Content-Type", `text/plain; charset=UTF-8`);
         headers.set("Vary", `Accept-Encoding`);
         headers.set("Use-As-Dictionary", `match="/pages/*", match-dest=("document" "frame"), id="${name}"`);
@@ -23,7 +22,7 @@ export async function getDictionary( name:String, req:IRequestStrict ) {
 
     else if ( name === "big-specific.dict" ) {
 
-        headers.set("Cache-Control", `public, max-age=2592000`);
+        headers.set("Cache-Control", `public, max-age=300`);
         headers.set("Content-Type", `text/plain; charset=UTF-8`);
         headers.set("Vary", `Accept-Encoding`);
         headers.set("Use-As-Dictionary", `match="/pages/big.txt", match-dest=("document" "frame"), id="${name}"`);

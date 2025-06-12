@@ -16,7 +16,7 @@ export async function proxy( req:IRequest ) {
     const originalResponse = await fetch(`https://assets.spin.internal/${req.params.filepath}`);
 
 
-    console.log(`[proxy]: compression config : ${ JSON.stringify(config) }`);
+    console.log(`[proxy]: compression config for ${req.params.filepath} : ${ JSON.stringify(config) }, debug config: ${ JSON.stringify(req.debugConfig) }`);
     console.log(`[proxy]: handling ${req.params.filepath} : origin returned ${originalResponse.status}`);
 
     if ( !config.compression || originalResponse.status !== 200 ) {
@@ -31,7 +31,7 @@ export async function proxy( req:IRequest ) {
     // we also support just compressing to zstd/brotli without using a dictionary
     const useDictionary = config.compression!.dictionary !== undefined;
     const dictHash = useDictionary ? config.compression.dictionary?.sha256hash! : "";
-    const dictFilename = useDictionary ? config.compression.dictionary?.filename! : ""; 
+    const dictFilename = useDictionary ? config.compression.dictionary?.filename! : "";
 
     
     //else if ( availableDictionary !== "" ) {
@@ -44,14 +44,25 @@ export async function proxy( req:IRequest ) {
         if ( useDictionary ) {
             headers.set("Content-Encoding", "dcz");
             headers.set("Vary", "Accept-Encoding, Available-Dictionary");
+
+            // Akamai doesn't handle Vary directly and we want to remove the Vary header wholesale there
+            // however, we do want to know if we need to add Available-Dictionary downstream to the browser, 
+            // to use an X- header that we can extract from on the Akamai side
+            headers.set("X-CDICT-Vary", "Accept-Encoding, Available-Dictionary");
         }
         else {
             headers.set("Content-Encoding", "zstd");
             headers.set("Vary", "Accept-Encoding");
         }
 
+        headers.set("cache-control", "public, no-transform, max-age=300");
+
         console.log(`[proxy]: pre zstd return`);
 
+
+        let respHeaders = {} as any;
+        headers.forEach( (v, k, p) => respHeaders[ "" + k ] = v );
+        console.log(`[proxy]: response headers for ${req.params.filepath} : ${JSON.stringify(respHeaders)}`);
         
         return new Response(originalResponse.body?.pipeThrough(compressionStream), { status: originalResponse.status, headers: headers });
 

@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Prefetch dictionaries for later usage</title>
-
-    <style>
-        
-    </style>
     
   </head>
   <body>
@@ -30,5 +26,17 @@
         
       </div>
     </div>
+    
+    
+    <script>
+        // copy all query params from this page to all links 
+        // (useful for cache busting and debugging)
+        addEventListener("DOMContentLoaded", (evt) => {
+           for( let link of document.links ) { 
+                link.href += window.location.search;
+           } 
+        });
+    </script>
+    
   </body>
 </html>

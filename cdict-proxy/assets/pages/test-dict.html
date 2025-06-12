@@ -7,7 +7,7 @@
     <title>Test compression dictionaries</title>
 
     
-    <script src="../files/main.v2.js" type="text/javascript"></script>
+    <script data-src="../files/main.v2.js" type="text/javascript"></script>
 
     <style>
         
@@ -39,8 +39,42 @@
     </div>
 
     <script>
-        $("#jquery-out").html("jQuery loaded!");
+        // $("#jquery-out").html("jQuery loaded!");
     </script>
+
+    <script>
+        // copy all query params from this page to all links 
+        // (useful for cache busting and debugging)
+        addEventListener("DOMContentLoaded", (evt) => {
+            for( let link of document.links ) { 
+                link.href += window.location.search;
+            } 
+            
+            // for <script>
+            for ( let script of document.scripts ) {
+                let datasrc = script.getAttribute("data-src");
+                if ( !datasrc )
+                    continue;
+                
+                let src = datasrc + window.location.search;
+                script.setAttribute("src", src);
+            }
+            
+            // for <link rel="compression-dictionary" and <link rel="stylesheet"
+            let allLinks = document.querySelectorAll("link");
+            for ( let link of allLinks ) {
+                let datahref = link.getAttribute("data-href");
+                if ( !datahref )
+                    continue;
+                
+                let href = datahref + window.location.search;
+                link.setAttribute("href", href);
+            }
+            
+            // TODO: for JSON from JS and SVG
+        });
+    </script>
+    
   </body>
 </html>
 
